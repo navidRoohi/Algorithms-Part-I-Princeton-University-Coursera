@@ -7,7 +7,6 @@ import edu.princeton.cs.algs4.*;
  *
  * @author navidroohibroojeni
  */
-// This is a comment
 public class Percolation {
     
    public int gridSize; 
@@ -23,12 +22,10 @@ public class Percolation {
        weightedQuickUnionUF = new WeightedQuickUnionUF(n);
        int num = 0;
        
-       for(int i=0; i< n ; i++){
-           for(int j=0; j< n ; j++){
-               gridNumbers[j][i] = num;
-               num++;
-            }
-       }
+   }
+   // map 2 dimensional grid to 1 dimensional. 
+   public int mapTwoDGridToOneDGrid(int a, int b){
+        return (a - 1) * gridSize + b ;
    }
           
     // open site (row i, column j) if it is not open already
@@ -96,11 +93,9 @@ public class Percolation {
     public static void main(String[] args) {
         Percolation obj = new Percolation( 5 );
         
-        System.out.println (obj.percolates() );
+        System.out.println ( obj.mapTwoDGridToOneDGrid(3, 4));
 
-      
-    }
-    
+    } 
 }
 
 
