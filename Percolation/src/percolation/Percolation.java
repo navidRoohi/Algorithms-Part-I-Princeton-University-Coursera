@@ -9,45 +9,49 @@ import edu.princeton.cs.algs4.*;
  */
 public class Percolation {
     
-   public int gridSize; 
+   public static int gridSize; 
    public boolean grid[][];
-   public int gridNumbers[][];
-   static WeightedQuickUnionUF weightedQuickUnionUF; 
+   static WeightedQuickUnionUF weightedQuickUnionUF;
+   int topVirtualRow, bottomVirtualRow;
 
    // create n-by-n grid, with all sites blocked 
    public Percolation(int n){
-       this.gridSize = n;
+       gridSize = n;
        grid = new boolean[n][n];
-       gridNumbers = new int[n][n];
-       weightedQuickUnionUF = new WeightedQuickUnionUF(n);
-       int num = 0;
-       
+       weightedQuickUnionUF = new WeightedQuickUnionUF(n * n + 2);
+       for(int i = 1 ; i <= n ; i++){
+           topVirtualRow = 0;
+           bottomVirtualRow  = n * n + 1;
+           weightedQuickUnionUF.union(topVirtualRow, mapTwoDGridToOneDGrid(i , 1));
+           weightedQuickUnionUF.union(bottomVirtualRow, mapTwoDGridToOneDGrid(i , n));
+       }
    }
    // map 2 dimensional grid to 1 dimensional. 
-   public int mapTwoDGridToOneDGrid(int a, int b){
+   public static int mapTwoDGridToOneDGrid(int a, int b){
         return (a - 1) * gridSize + b ;
    }
           
     // open site (row i, column j) if it is not open already
    public void open(int i, int j){
-       chekCornerCases(i,j);
+        chekCornerCases(i,j);
        grid[i][j] = true;
-       
          // front
-         if(isOpen(i,j) 
-                 && (i+1 < gridSize) 
-                 && isOpen(i+1,j) 
-                 && !weightedQuickUnionUF.connected(gridNumbers[i][j], gridNumbers[i+1][j]) ){
-             
-                    weightedQuickUnionUF.union(gridNumbers[i][j], gridNumbers[i+1][j]);
+         if((i+1 < gridSize) 
+                 && isOpen(i + 1, j) 
+                 && !weightedQuickUnionUF.connected( mapTwoDGridToOneDGrid(i, j)  , mapTwoDGridToOneDGrid(i+1, j)) ){
+                    weightedQuickUnionUF.union(mapTwoDGridToOneDGrid(i, j), mapTwoDGridToOneDGrid(i+1, j));
          }
          // buttom
-         if(isOpen(i,j) 
-                 && (j+1 < gridSize) 
-                 && isOpen(i,j+1) 
-                 && !weightedQuickUnionUF.connected(gridNumbers[i][j], gridNumbers[i][j+1])){
-             
-                    weightedQuickUnionUF.union(gridNumbers[i][j], gridNumbers[i][j+1]);
+         if((j+1 < gridSize) 
+                 && isOpen(i, j + 1) 
+                 && !weightedQuickUnionUF.connected(mapTwoDGridToOneDGrid(i, j), mapTwoDGridToOneDGrid(i, j+1))){
+                   weightedQuickUnionUF.union(mapTwoDGridToOneDGrid(i, j), mapTwoDGridToOneDGrid(i, j+1 ));
+         }
+          // Left
+         if((j+1 < gridSize) 
+                 && isOpen(i - 1, j) 
+                 && !weightedQuickUnionUF.connected(mapTwoDGridToOneDGrid(i, j), mapTwoDGridToOneDGrid(i, j+1))){
+                   weightedQuickUnionUF.union(mapTwoDGridToOneDGrid(i, j), mapTwoDGridToOneDGrid(i, j+1 ));
          }
    }
    
@@ -64,19 +68,7 @@ public class Percolation {
    }
    // does the system percolate?
    public boolean percolates(){
-       boolean result = false;
-       
-       for(int i=0 ; i < gridSize; i++){
-            for(int j=0 ; j < gridSize; j++){
-                 
-                if( weightedQuickUnionUF.connected( gridNumbers[j][0], gridNumbers[j][gridSize-1])) {
-                 result = true;
-                }        
-            }
-           
-        
-       }
-       return result;
+       return weightedQuickUnionUF.connected(topVirtualRow, bottomVirtualRow );
    }  
    
    private void chekCornerCases(int i, int j){
@@ -92,8 +84,15 @@ public class Percolation {
      */
     public static void main(String[] args) {
         Percolation obj = new Percolation( 5 );
+      //  System.out.println ( obj.isOpen(4, 4) );
+       // obj.open(1, 2);
+       // obj.open(2, 2);
+
+        System.out.println ( obj.percolates() );
         
-        System.out.println ( obj.mapTwoDGridToOneDGrid(3, 4));
+       // System.out.println ( weightedQuickUnionUF.connected(mapTwoDGridToOneDGrid(1,2), mapTwoDGridToOneDGrid(2,2)) );
+
+        
 
     } 
 }
