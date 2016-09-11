@@ -7,7 +7,7 @@ import edu.princeton.cs.algs4.*;
  *
  * @author navidroohibroojeni
  */
-
+// This is a comment
 public class Percolation {
     
    public int gridSize; 
